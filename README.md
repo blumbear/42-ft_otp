@@ -17,7 +17,7 @@ source venv/bin/activate
 venv\Scripts\activate
 
 ### Install required packages
-pip install qrcode[pil] PyPNG
+pip install "qrcode[pil]" PyPNG
 
 ## Usage
 
