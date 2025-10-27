@@ -57,7 +57,7 @@ def genQrCode(otp):
 	img.show()
 
 def main():
-	parser = argparse.ArgumentParser(description='ft_otp - HOTP alghorithm')
+	parser = argparse.ArgumentParser(description='ft_otp - HOTP and TOTP alghorithm')
 
 	parser.add_argument('-g', '--gen',
 						type=str,
