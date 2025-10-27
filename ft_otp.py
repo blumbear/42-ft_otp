@@ -4,6 +4,7 @@ import hmac
 import os
 import struct
 import time
+import qrcode
 
 def initCounterFile(filePath: str):
 	if not os.path.exists(filePath):
@@ -36,17 +37,23 @@ def hotpSeedHandler(file):
 		countFile.seek(0)
 	with open('.count', "w") as countFile:
 		countFile.write(str(tmp))
-	genkey(file, tmp)
+	return (genkey(file, tmp))
 
 def totpSeedHandler(file):
 	tmp = time.time()
-	genkey(file, int(tmp))
+	return (genkey(file, int(tmp)))
 
 def genkey(file, seed):
 	s = dt(hmac.new(file.read(), struct.pack(">Q", seed), sha1))
-	print(f"{"{:06}".format(s % 10 ** 6)}")
+	res = "{:06}".format(s % 10 ** 6)
+	print(f"{res}")
+	return (res)
 	
 
+def genQrCode(otp):
+	img = qrcode.make(str(otp))
+	type(img)
+	img.save("./qrcode"+ str(time.time()) +".png")
 
 def main():
 	parser = argparse.ArgumentParser(description='ft_otp - HOTP alghorithm')
@@ -69,18 +76,25 @@ def main():
 						help='Generates a new temporary password based on the key given as argument and the HOTP algorithm. Prints it on the standard output'
 					)
 
-	args=parser.parse_args()
+	parser.add_argument('-q', '--qr-code',
+						action="store_true",
+						help='Generates a QR code with the otp code in it.'
+					)
 
+	args=parser.parse_args()
 	if args.gen:
 		storeKey(args.gen)
 	elif (args.key):
 		with open(args.key, "rb") as file:
 			initCounterFile('.count')
-			hotpSeedHandler(file)
+			res = hotpSeedHandler(file)
 	elif (args.totp):
 		with open(args.totp, "rb") as file:
 			initCounterFile('.count')
-			totpSeedHandler(file)
+			res = totpSeedHandler(file)
+	if (args.qr_code == True and (args.key or args.totp)):
+		genQrCode(res)
+	print (res)
 
 if __name__ == "__main__":
 	main()
