@@ -1,6 +1,6 @@
 # ft_otp
 
-A simple HOTP (HMAC-based One-Time Password) implementation in Python.
+A simple HOTP (HMAC-based One-Time Password) and TOTP (Time-based One-Time Password) implementation in Python.
 
 ## Description
 
