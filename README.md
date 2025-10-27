@@ -6,6 +6,19 @@ A simple HOTP (HMAC-based One-Time Password) implementation in Python.
 
 This program implements the HOTP algorithm to generate time-based one-time passwords. It can store hexadecimal keys securely and generate temporary passwords based on those keys.
 
+## Initialisation
+### Create virtual environment
+python3 -m venv venv
+
+### Activate virtual environment
+### On Linux/Mac:
+source venv/bin/activate
+### On Windows:
+venv\Scripts\activate
+
+### Install required packages
+pip install qrcode[pil] PyPNG
+
 ## Usage
 
 ### Store a key
