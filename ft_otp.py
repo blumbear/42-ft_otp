@@ -3,6 +3,7 @@ from hashlib import sha1
 import hmac
 import os
 import struct
+import time
 
 def initCounterFile(filePath: str):
 	if not os.path.exists(filePath):
@@ -28,15 +29,21 @@ def dt(mac):
 	p = hdig[offset * 2 : offset * 2 + 8]
 	return int(p, 16) & 0x7fffffff
 
-def genkey(file):
-	initCounterFile('.count')
+def hotpSeedHandler(file):
 	with open('.count', "r") as countFile:
 		tmp: int = int(countFile.read().strip())
 		tmp += 1
 		countFile.seek(0)
 	with open('.count', "w") as countFile:
 		countFile.write(str(tmp))
-	s = dt(hmac.new(file.read(), struct.pack(">Q", tmp), sha1))
+	genkey(file, tmp)
+
+def totpSeedHandler(file):
+	tmp = time.time()
+	genkey(file, int(tmp))
+
+def genkey(file, seed):
+	s = dt(hmac.new(file.read(), struct.pack(">Q", seed), sha1))
 	print(f"{"{:06}".format(s % 10 ** 6)}")
 	
 
@@ -68,7 +75,12 @@ def main():
 		storeKey(args.gen)
 	elif (args.key):
 		with open(args.key, "rb") as file:
-			genkey(file)
+			initCounterFile('.count')
+			hotpSeedHandler(file)
+	elif (args.totp):
+		with open(args.totp, "rb") as file:
+			initCounterFile('.count')
+			totpSeedHandler(file)
 
 if __name__ == "__main__":
 	main()
